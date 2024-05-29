@@ -6,7 +6,9 @@ Then you have to take into account any gearing between the motor and wheels. Any
 
 But in general a Seven has a gearbox going one stage of gear reduction followed by a differential doing a second stage. And then the differential also splits the torque in two to each wheel.
 
-Therefore, the torque to each rear driven wheel at any given motor speed is: wheel_torque = motor_torque * gearbox_ratio * differential_ratio / 2.
+Therefore, the torque to each rear driven wheel at any given motor speed is: 
+
+  wheel_torque = motor_torque * gearbox_ratio * differential_ratio / 2.
 
 So it should be simple to come up with a Wheel Torque vs Speed graph, showing the torque produced by the motor.
 
