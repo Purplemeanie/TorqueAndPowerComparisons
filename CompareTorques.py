@@ -6,12 +6,15 @@ import matplotlib.pyplot as plt
 
 WheelCircumference = 2.0
 
+km_per_mi = 1.60934
+mi_per_km = 1 / km_per_mi
+
 Results = {}
 
 DriveTrains = [
 	{
 		# https://www.automobile-catalog.com/curve/2017/2515235/caterham_seven_420.html			
-		"Name": "Duratec 420 + Mazda", 
+		"Name": "Duratec 420 5-speed", 
 		"FinalDrive": 3.9, 
 		"MaxPowerAt": 7600, 
 		"Gearbox": [3.14,1.89,1.33,1.0,0.81],
@@ -91,10 +94,23 @@ DriveTrains = [
 		}
 	},
 	{
-		"Name": "Helix SPX177", 
+		"Name": "Helix SPX177 400A", 
 		"FinalDrive": 3.6, 
 		"MaxPowerAt": 18000, 
-		"Gearbox": [1.89, 2.5],
+		"Gearbox": [3.0],
+		# 4000A Max AC RMS Current
+		"DynoData": {
+			0:[145, 0],
+			12000:[145, 150],
+			18000:[73, 150],
+		}
+	},
+	{
+		"Name": "Helix SPX177 550A", 
+		"FinalDrive": 3.6, 
+		"MaxPowerAt": 18000, 
+		"Gearbox": [2.5],
+		# 550A Max AC RMS Current
 		"DynoData": {
 			0:[200, 0],
 			12000:[200, 150],
@@ -104,7 +120,7 @@ DriveTrains = [
 ]
 
 def main():
-	range_low = 10
+	range_low = 0
 	range_end = 165
 	range_step = 2
 
@@ -123,7 +139,7 @@ def main():
 			#print(f"Wheel RPM: {wheel_rpm:.3f}")
 			meters_per_minute = wheel_rpm * WheelCircumference
 			meters_per_hour = meters_per_minute * 60
-			mph_at_max_power.append(meters_per_hour * 5 / (8 * 1000))
+			mph_at_max_power.append(meters_per_hour * km_per_mi / (1000))
 			#print(f"Miles Per Hour: {mph_at_max_power[-1]:.3f}")
 		pprint.pp(mph_at_max_power)
 
@@ -162,7 +178,7 @@ def main():
 				meters_per_minute = wheel_rpm * WheelCircumference
 				meters_per_hour = meters_per_minute * 60
 
-				mph_for_max_torque_change.append(meters_per_hour * 5 / (8 * 1000))
+				mph_for_max_torque_change.append(meters_per_hour * mi_per_km / (1000))
 
 				# Workd out engine_rpm for current gear (just for testing)
 				engine_rpm = wheel_rpm * dt["FinalDrive"] * this_gear
@@ -189,7 +205,7 @@ def main():
 			rpm = 0
 			gear_ratio = dt["Gearbox"][gear-1]
 			diff_ratio = dt["FinalDrive"]
-			meters_per_minute = speed * gear_ratio * diff_ratio * 1000.0 *  8.0 / (5.0 * 60.0)
+			meters_per_minute = speed * gear_ratio * diff_ratio * 1000.0 * km_per_mi / (60.0)
 			rpm = meters_per_minute / WheelCircumference
 
 			# Get Torque at this RPM
@@ -229,7 +245,7 @@ def main():
 			#torque_in_gears_vs_speed[speed] = []
 			for gear, gear_ratio in enumerate(dt["Gearbox"]):
 
-				meters_per_minute = speed * gear_ratio * diff_ratio * 1000.0 *  8.0 / (5.0 * 60.0)
+				meters_per_minute = speed * gear_ratio * diff_ratio * 1000.0 * km_per_mi / (60.0)
 				rpm = meters_per_minute / WheelCircumference
 
 				if (rpm > min_rpm and rpm < max_rpm):
@@ -272,20 +288,22 @@ def main():
 					case _: gear_str = "Unknown"
 
 				# If we don't have a dict item for this gear yet, then create it
+				gear_str = f"{str(gear_ratio)}"
 				if gear_str not in Results[dt["Name"]]:
 					Results[dt["Name"]][gear_str] = []
 
-				if (wheel_torque != 0):
-					Results[dt["Name"]][gear_str].append(int(wheel_torque))
-				else:
-					Results[dt["Name"]][gear_str].append(int(wheel_torque))
+				Results[dt["Name"]][gear_str].append(int(wheel_torque))
 
 	plt.figure(figsize=(12,6)) # Plot size in inches!
 	for dt_name in Results:
 		for key in Results[dt_name]:
 			y1 = np.array(Results[dt_name][key],dtype=np.double)
 			y1[ y1==0 ] = np.nan
-			plt.plot(X, y1, label = f"{dt_name}->{key}")
+			FinalDrive = "??"
+			for dt in DriveTrains:
+				if (dt["Name"] == dt_name):
+					FinalDrive = dt["FinalDrive"]
+			plt.plot(X, y1, label = f"{dt_name}->({FinalDrive}*{key}):1")
 
 	values = np.arange(0, 1500, 100)
 	value_increment = 1
@@ -296,7 +314,7 @@ def main():
 	plt.xlabel('Speed (mph)')
 	plt.ylabel('Torque (Nm)')
 	plt.tight_layout(rect=[0, 0.02, 1, 0.98])
-	plt.title('In-gear Torque at Wheel')
+	plt.title('In-gear Torque at Wheel (E-Motor torque limited by current)')
 	# Displaying the plot
 	plt.show()
 
