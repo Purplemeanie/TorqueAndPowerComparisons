@@ -18,6 +18,6 @@ THIS CODE IS NOT PRODUCTION GRADE: I threw this together for my own benefit. If 
 
 Anyway, here's a plot form the code as it stands at posting date. I created a benchmark set of in-gear plots for a Caterham Seven 420 (I found the data at the link repeated in the code). I then created two motor variants based around a motor I'm thinking of using in my conversion project. The two variants vary by the current that can be supplied to the motor and by a gear reduction I'll need to include in the design.
 
-
+![Model]https://github.com/Purplemeanie/TorqueAndPowerComparisons/blob/main/SPX177%20Wheel%20Torque%20Comparisons.png
 
 You can see from the graph that for the variants I've configured, the 420 beats the EV configurations in 1st gear but the EVs then take the lead from 2nd gear onwards.
