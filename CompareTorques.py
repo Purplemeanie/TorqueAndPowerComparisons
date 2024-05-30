@@ -1,24 +1,27 @@
 # Compare Torques
 import pprint
-import csv
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Seven wheel circumference
 WheelCircumference = 2.0
 
+# A couple of constants to work out conversions between miles-per-hour and km-per-hour
 km_per_mi = 1.60934
 mi_per_km = 1 / km_per_mi
 
+# Pre create an array to hold our final plot data
 Results = {}
 
 DriveTrains = [
 	{
 		# https://www.automobile-catalog.com/curve/2017/2515235/caterham_seven_420.html			
-		"Name": "Duratec 420 5-speed", 
-		"FinalDrive": 3.9, 
-		"MaxPowerAt": 7600, 
-		"Gearbox": [3.14,1.89,1.33,1.0,0.81],
+		"Name": "Duratec 420 5-speed",        # Name that will appear in the plot legend
+		"FinalDrive": 3.9,                    # Typically the differential ratio
+		"MaxPowerAt": 7600,                   # This is the RPM that delivers max power, max torque point is calculated
+		"Gearbox": [3.14,1.89,1.33,1.0,0.81], # A list of gear ratios i.e. [1st, 2nd, 3rd, 4th etc]
 		"DynoData": {
+			# RPM: [TORQUE_NM, POWER_KW]
 			1000: [89.70,9.40],
 			1100: [102.00,11.70],
 			1200: [112.20,14.10],
@@ -120,11 +123,11 @@ DriveTrains = [
 ]
 
 def main():
-	range_low = 0
-	range_end = 165
-	range_step = 2
+	speed_range_low = 0
+	speed_range_end = 165
+	speed_range_step = 2
 
-	X = np.arange(range_low, range_end, range_step)
+	X = np.arange(speed_range_low, speed_range_end, speed_range_step)
 
 	for dt in DriveTrains:
 		torque_in_gears_vs_speed = []
@@ -195,7 +198,7 @@ def main():
 
 		# Run across our speed range
 		wheel_torques = {}
-		for speed in range(range_low, range_end, range_step):
+		for speed in range(speed_range_low, speed_range_end, speed_range_step):
 			# Get Gear at this speed
 			gear = 1
 			while (gear < len(mph_at_max_power) and mph_at_max_power[gear-1] < speed):
@@ -238,7 +241,7 @@ def main():
 
 			wheel_torque = engine_torque * gear_ratio * diff_ratio / 2
 
-			print(f"Speed: {speed:.2f}, Gear: {gear}, GearRatio: {gear_ratio:.2f}, RPM: {rpm:.2f}, Engine Torque: {engine_torque:.2f}, Wheel Torque: {wheel_torque:.2f} [LR:{low_rpm}, HR:{high_rpm}, LT:{low_torque}, HT:{high_torque}]")
+			#print(f"Speed: {speed:.2f}, Gear: {gear}, GearRatio: {gear_ratio:.2f}, RPM: {rpm:.2f}, Engine Torque: {engine_torque:.2f}, Wheel Torque: {wheel_torque:.2f} [LR:{low_rpm}, HR:{high_rpm}, LT:{low_torque}, HT:{high_torque}]")
 
 			# Now run through each gear working out torque in that gear
 			diff_ratio = dt["FinalDrive"]
