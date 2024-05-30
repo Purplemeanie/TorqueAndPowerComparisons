@@ -3,8 +3,10 @@ import pprint
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Seven wheel circumference
-WheelCircumference = 2.0
+# Seven wheel circumference -> pi * (15_inch_rims * inch_per_m) + (tyre_width_meters * tyre_profile * 2_for_each_side)
+#WheelCircumference = 2.0
+WheelCircumference = 3.14159 * ((15 * 0.0254) + (0.195 * 0.5 * 2.0))
+print(f"Tyre Circumference: {WheelCircumference}m")
 
 # A couple of constants to work out conversions between miles-per-hour and km-per-hour
 km_per_mi = 1.60934
