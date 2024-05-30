@@ -100,26 +100,28 @@ DriveTrains = [
 	},
 	{
 		"Name": "Helix SPX177 400A", 
-		"FinalDrive": 3.6, 
-		"MaxPowerAt": 18000, 
+		"FinalDrive": 3.9, 
+		"MaxPowerAt": 23500, 
 		"Gearbox": [3.0],
 		# 4000A Max AC RMS Current
 		"DynoData": {
 			0:[145, 0],
 			12000:[145, 150],
 			18000:[91, 150],
+			23500:[72, 150],
 		}
 	},
 	{
 		"Name": "Helix SPX177 550A", 
-		"FinalDrive": 3.6, 
+		"FinalDrive": 3.9, 
 		"MaxPowerAt": 18000, 
-		"Gearbox": [2.5],
+		"Gearbox": [3.0],
 		# 550A Max AC RMS Current
 		"DynoData": {
 			0:[200, 0],
 			12000:[200, 150],
 			18000:[125, 150],
+			23500:[100, 150],
 		}
 	},
 ]
